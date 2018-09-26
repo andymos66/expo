@@ -174,7 +174,7 @@ jobs:
           command: yarn install
       - run:
           working_directory: ~/expo/tools-public
-          command: PATH=$(yarn bin):$PATH generate-dynamic-macros-android.sh
+          command: PATH=$(yarn bin):$PATH ./generate-dynamic-macros-android.sh
       - install_ndk
       - restore_gradle_cache
       - run:
