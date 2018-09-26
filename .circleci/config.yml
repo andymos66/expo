@@ -166,19 +166,24 @@ jobs:
 
   client_android:
     executor: android
-    working_directory: ~/expo/android
     steps:
       - checkout
       - set_up_environment
       - run:
-          working_directory: ~/project/tools-public
+          working_directory: ~/expo/tools-public
           command: yarn install
       - run:
-          working_directory: ~/project/tools-public
+          working_directory: ~/expo/tools-public
           command: PATH=$(yarn bin):$PATH generate-dynamic-macros-android.sh
       - install_ndk
       - restore_gradle_cache
-      - run: ./gradlew :app:preBuild
+      - run:
+          working_directory: ~/expo/android
+          command: ./gradlew :app:preBuild
       - save_gradle_cache
-      - run: ./gradlew :app:assembleProdMinSdkProdKernelRelease
-      - run: zipalign -v -p 4 ./app/build/outputs/apk/prodMinSdkProdKernel/release/app-prodMinSdk-prodKernel-release-unsigned.apk app-prod-release-unsigned-aligned.apk
+      - run:
+          working_directory: ~/expo/android
+          command: ./gradlew :app:assembleProdMinSdkProdKernelRelease
+      - run:
+          working_directory: ~/expo/android
+          command: zipalign -v -p 4 ./app/build/outputs/apk/prodMinSdkProdKernel/release/app-prodMinSdk-prodKernel-release-unsigned.apk app-prod-release-unsigned-aligned.apk
