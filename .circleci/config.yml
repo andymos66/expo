@@ -172,6 +172,7 @@ jobs:
       - run:
           working_directory: ~/expo/tools-public
           command: yarn install
+      - run: yarn global add gulp@4.0.0
       - run:
           working_directory: ~/expo/tools-public
           command: PATH=$(yarn bin):$PATH ./generate-dynamic-macros-android.sh
