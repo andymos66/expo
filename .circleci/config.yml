@@ -22,6 +22,16 @@ commands:
           key: yarn-v1-{{ checksum "yarn.lock" }}
           paths:
             - ~/.cache/yarn  # set by YARN_CACHE_FOLDER
+  restore_gradle_cache:
+    steps:
+      - restore_cache:
+        key: jars-v0-{{ checksum "android/build.gradle" }}-{{ checksum  "android/app/build.gradle" }}
+  save_gradle_cache:
+    steps:
+      - save_cache:
+        key: jars-v0-{{ checksum "android/build.gradle" }}-{{ checksum  "android/app/build.gradle" }}
+        paths:
+          - /.gradle
   jest:
     parameters:
       dir:
@@ -43,8 +53,16 @@ commands:
           command: yarn lint --max-warnings 0
 
 executors:
+  android:
+    working_directory: ~/expo
+    docker:
+      # https://github.com/CircleCI-Public/circleci-dockerfiles/tree/master/android/images
+      - image: circleci/android:api-25-ndk-r17b
+    environment:
+      YARN_CACHE_FOLDER: ~/.cache/yarn
   js:
     docker:
+      # https://github.com/CircleCI-Public/circleci-dockerfiles/tree/master/node/images
       - image: circleci/node:8
     resource_class: small
     working_directory: ~/expo
@@ -70,6 +88,7 @@ workflows:
   client:
     jobs:
       - home
+      - client_android
       - client_ios
   #     - shell_app_sim_base_ios
   #     - shell_app_ios_tests:
@@ -77,7 +96,6 @@ workflows:
   #           - shell_app_sim_base_ios
   #           - test_suite_publish
   #     - test_suite_publish
-  #     - client_android
   #     - client_android_tests:
   #         requires:
   #           - test_suite_publish
@@ -133,3 +151,21 @@ jobs:
           working_directory: ~/project/tools-public
           command: PATH=$(yarn bin):$PATH ./generate-files-ios.sh
       - run: fastlane ios create_simulator_build
+
+  client_android:
+    executor: android
+    working_directory: ~/expo/android
+    steps:
+      - checkout
+      - set_up_environment
+      - run:
+          working_directory: ~/project/tools-public
+          command: yarn install
+      - run:
+          working_directory: ~/project/tools-public
+          command: PATH=$(yarn bin):$PATH generate-dynamic-macros-android.sh
+      - restore_gradle_cache
+      - run: ./gradlew :app:preBuild
+      - save_gradle_cache
+      - run: ./gradlew :app:assembleProdMinSdkProdKernelRelease
+      - run: zipalign -v -p 4 ./app/build/outputs/apk/prodMinSdkProdKernel/release/app-prodMinSdk-prodKernel-release-unsigned.apk app-prod-release-unsigned-aligned.apk
