@@ -62,8 +62,8 @@ executors:
     docker:
       # https://github.com/CircleCI-Public/circleci-dockerfiles/tree/master/android/images
       - image: circleci/android:api-27-ndk-r17b
+      - user: circleci
     environment:
-      USER: circleci
       YARN_CACHE_FOLDER: ~/.cache/yarn
       NIX_PATH: nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/f2b3bbe44e4f7e220ecb1308d1acdac5e6a0f8ba.tar.gz
   nix:
