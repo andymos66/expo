@@ -1,10 +1,6 @@
 version: 2.1
 
 commands:
-  set_up_environment:
-    steps:
-      - run: git submodule update --init
-      - run: curl https://nixos.org/releases/nix/nix-2.1.1/install | bash -s -- --daemon
   fetch_cocoapods_specs:
     steps:
       - run: curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
@@ -58,10 +54,9 @@ executors:
     environment:
       YARN_CACHE_FOLDER: ~/.cache/yarn
       NIX_PATH: nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/f2b3bbe44e4f7e220ecb1308d1acdac5e6a0f8ba.tar.gz
-  js:
+  nix:
     docker:
-      # https://github.com/CircleCI-Public/circleci-dockerfiles/tree/master/node/images
-      - image: circleci/node:8
+      - image: lnl7/nix:2.1.2
     resource_class: small
     working_directory: ~/expo
     environment:
@@ -103,10 +98,10 @@ workflows:
 
 jobs:
   expo_sdk:
-    executor: js
+    executor: nix
     steps:
       - checkout
-      - set_up_environment
+      - run: git submodule update --init
       - restore_yarn_cache
       - yarn:
           command: install
@@ -118,10 +113,10 @@ jobs:
           working_directory: ~/expo/packages/expo
 
   babel_preset:
-    executor: js
+    executor: nix
     steps:
       - checkout
-      - set_up_environment
+      - run: git submodule update --init
       - restore_yarn_cache
       - yarn:
           command: install
@@ -135,10 +130,10 @@ jobs:
           working_directory: ~/expo/packages/babel-preset-expo
 
   home:
-    executor: js
+    executor: nix
     steps:
       - checkout
-      - set_up_environment
+      - run: git submodule update --init
       - restore_yarn_cache
       - yarn:
           command: install
@@ -152,7 +147,7 @@ jobs:
     executor: mac
     steps:
       - checkout
-      - set_up_environment
+      - run: git submodule update --init
       - fetch_cocoapods_specs
       - yarn:
           command: install
@@ -166,7 +161,7 @@ jobs:
     executor: android
     steps:
       - checkout
-      - set_up_environment
+      - run: git submodule update --init
       - yarn:
           command: install
           working_directory: ~/project/tools-public
