@@ -1,6 +1,9 @@
 version: 2.1
 
 commands:
+  submodule_update:
+    steps:
+      - run: nix run nixpkgs.git -c git submodule update --init
   fetch_cocoapods_specs:
     steps:
       - run: curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
@@ -101,7 +104,7 @@ jobs:
     executor: nix
     steps:
       - checkout
-      - run: git submodule update --init
+      - submodule_update
       - restore_yarn_cache
       - yarn:
           command: install
@@ -116,7 +119,7 @@ jobs:
     executor: nix
     steps:
       - checkout
-      - run: git submodule update --init
+      - submodule_update
       - restore_yarn_cache
       - yarn:
           command: install
@@ -133,7 +136,7 @@ jobs:
     executor: nix
     steps:
       - checkout
-      - run: git submodule update --init
+      - submodule_update
       - restore_yarn_cache
       - yarn:
           command: install
@@ -147,7 +150,7 @@ jobs:
     executor: mac
     steps:
       - checkout
-      - run: git submodule update --init
+      - submodule_update
       - fetch_cocoapods_specs
       - yarn:
           command: install
@@ -161,7 +164,7 @@ jobs:
     executor: android
     steps:
       - checkout
-      - run: git submodule update --init
+      - submodule_update
       - yarn:
           command: install
           working_directory: ~/project/tools-public
