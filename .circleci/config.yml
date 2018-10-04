@@ -36,7 +36,7 @@ commands:
         type: string
     steps:
       - run:
-          working_directory: << parameters.dir >>
+          working_directory: << parameters.working_directory >>
           command: nix run nixpkgs.yarn -c yarn << parameters.command >>
   with_yarn_bin:
     parameters:
@@ -46,7 +46,7 @@ commands:
         type: string
     steps:
       - run:
-          working_directory: << parameters.dir >>
+          working_directory: << parameters.working_directory >>
           command: PATH=$(nix run nixpkgs.yarn -c yarn bin):$PATH << parameters.command >>
 
 executors:
@@ -173,7 +173,6 @@ jobs:
       - with_yarn_bin:
           working_directory: ~/expo/tools-public
           command: ./generate-dynamic-macros-android.sh
-      - install_ndk
       - restore_gradle_cache
       - run:
           working_directory: ~/expo/android
