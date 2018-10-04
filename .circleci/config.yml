@@ -4,7 +4,7 @@ commands:
   set_up_environment:
     steps:
       - run: git submodule update --init
-      - run: curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.10.1
+      - run: curl -o- -L https://yarnpkg.com/install.sh | sudo bash -s -- --version 1.10.1
   install_workspace_dependencies:
     description: "Run `yarn install` from the workspace root to install all of the workspaces' dependencies"
     steps:
