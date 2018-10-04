@@ -109,12 +109,12 @@ jobs:
       - set_up_environment
       - restore_yarn_cache
       - yarn:
-          subcommand: install
+          command: install
           working_directory: ~/expo
       - save_yarn_cache
       # Add back linting once we get ESLint or TSLint set up
       - yarn:
-          subcommand: jest --maxWorkers 1
+          command: jest --maxWorkers 1
           working_directory: ~/expo/packages/expo
 
   babel_preset:
@@ -124,14 +124,14 @@ jobs:
       - set_up_environment
       - restore_yarn_cache
       - yarn:
-          subcommand: install
+          command: install
           working_directory: ~/expo
       - save_yarn_cache
       - yarn:
-          subcommand: lint --max-warnings 0
+          command: lint --max-warnings 0
           working_directory: ~/expo/packages/babel-preset-expo
       - yarn:
-          subcommand: jest --maxWorkers 1
+          command: jest --maxWorkers 1
           working_directory: ~/expo/packages/babel-preset-expo
 
   home:
@@ -141,11 +141,11 @@ jobs:
       - set_up_environment
       - restore_yarn_cache
       - yarn:
-          subcommand: install
+          command: install
           working_directory: ~/expo
       - save_yarn_cache
       - yarn:
-          subcommand: jest --maxWorkers 1
+          command: jest --maxWorkers 1
           working_directory: ~/expo/home
 
   client_ios:
@@ -155,7 +155,7 @@ jobs:
       - set_up_environment
       - fetch_cocoapods_specs
       - yarn:
-          subcommand: install
+          command: install
           working_directory: ~/project/tools-public
       - with_yarn_bin:
           working_directory: ~/project/tools-public
@@ -168,7 +168,7 @@ jobs:
       - checkout
       - set_up_environment
       - yarn:
-          subcommand: install
+          command: install
           working_directory: ~/project/tools-public
       - with_yarn_bin:
           working_directory: ~/expo/tools-public
