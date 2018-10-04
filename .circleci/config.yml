@@ -4,21 +4,17 @@ commands:
   install_nix:
     steps:
       - run: curl https://nixos.org/releases/nix/nix-2.1.1/install | bash -s -- --daemon
+      # enable nix in future steps
+      - run: echo ". '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'" >> $BASH_ENV
   install_basics:
     steps:
       - run: NIX_PATH= nix-env -iA nixpkgs.git nixpkgs.openssh nixpkgs.gnutar nixpkgs.xz nixpkgs.gzip
-  custom_checkout:
-    steps:
-      - run: NIX_PATH= nix-env -iA nixpkgs.gnutar nixpkgs.xz nixpkgs.gzip
-      - run: mkdir -p ~/.ssh
-      - run: echo "github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==" >> ~/.ssh/known_hosts
-      - run: nix run nixpkgs.git -c git clone --depth 1 --verbose --shallow-submodules --recurse-submodules --branch $CIRCLE_BRANCH $CIRCLE_REPOSITORY_URL $CIRCLE_WORKING_DIRECTORY
   submodule_update:
     steps:
-      - run: nix run nixpkgs.git nixpkgs.gnutar -c git submodule update --init
+      - run: nix run nixpkgs.git -c git submodule update --init
   fetch_cocoapods_specs:
     steps:
-      - run: curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
+      - run: nix run nixpkgs.curl -c curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
   restore_yarn_cache:
     steps:
       - restore_cache:
@@ -67,6 +63,7 @@ executors:
       # https://github.com/CircleCI-Public/circleci-dockerfiles/tree/master/android/images
       - image: circleci/android:api-27-ndk-r17b
     environment:
+      USER: circleci
       YARN_CACHE_FOLDER: ~/.cache/yarn
       NIX_PATH: nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/f2b3bbe44e4f7e220ecb1308d1acdac5e6a0f8ba.tar.gz
   nix:
