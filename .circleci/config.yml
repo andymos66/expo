@@ -8,7 +8,7 @@ commands:
       - run: echo ". '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'" >> $BASH_ENV
   install_basics:
     steps:
-      - run: NIX_PATH= nix-env -iA nixpkgs.git nixpkgs.openssh nixpkgs.gnutar nixpkgs.xz nixpkgs.gzip
+      - run: NIX_PATH= nix-env -iA nixpkgs.git nixpkgs.openssh nixpkgs.gnutar nixpkgs.xz nixpkgs.gzip nixpkgs.find
   submodule_update:
     steps:
       - run: nix run nixpkgs.git -c git submodule update --init
