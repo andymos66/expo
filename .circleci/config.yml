@@ -167,7 +167,7 @@ jobs:
       - yarn:
           command: install
           working_directory: ~/project/tools-public
-      - run: ~/project/tools-public/generate-files-ios.sh
+      - run: nix run nixpkgs.nodejs-8_x -c ~/project/tools-public/generate-files-ios.sh
       - run: fastlane ios create_simulator_build
 
   client_android:
@@ -179,7 +179,7 @@ jobs:
       - yarn:
           command: install
           working_directory: ~/expo/tools-public
-      - run: ~/expo/tools-public/generate-dynamic-macros-android.sh
+      - run: nix run nixpkgs.nodejs-8_x -c ~/expo/tools-public/generate-dynamic-macros-android.sh
       - restore_gradle_cache
       - run:
           working_directory: ~/expo/android
