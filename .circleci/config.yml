@@ -8,7 +8,7 @@ commands:
       - run: echo ". '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'" >> $BASH_ENV
   install_basics:
     steps:
-      - run: NIX_PATH= nix-env -iA nixpkgs.git nixpkgs.openssh nixpkgs.gnutar nixpkgs.xz nixpkgs.gzip nixpkgs.findutils
+      - run: NIX_PATH= nix-env -iA nixpkgs.git nixpkgs.openssh nixpkgs.gnutar nixpkgs.xz nixpkgs.gzip
   submodule_update:
     steps:
       - run: nix run nixpkgs.git -c git submodule update --init
@@ -35,6 +35,17 @@ commands:
           key: jars-v0-{{ checksum "android/build.gradle" }}-{{ checksum  "android/app/build.gradle" }}
           paths:
             - /.gradle
+  jest:
+    parameters:
+      workers:
+        type: string
+        default: "1"
+      working_directory:
+        type: string
+    steps:
+      - run:
+          working_directory: << parameters.working_directory >>
+          command: nix run nixpkgs.yarn nixpkgs.findutils -c yarn jest --maxWorkers << parameters.workers >>
   yarn:
     parameters:
       command:
@@ -122,8 +133,7 @@ jobs:
           working_directory: ~/expo
       - save_yarn_cache
       # Add back linting once we get ESLint or TSLint set up
-      - yarn:
-          command: jest --maxWorkers 1
+      - jest:
           working_directory: ~/expo/packages/expo
 
   babel_preset:
@@ -140,8 +150,7 @@ jobs:
       - yarn:
           command: lint --max-warnings 0
           working_directory: ~/expo/packages/babel-preset-expo
-      - yarn:
-          command: jest --maxWorkers 1
+      - jest:
           working_directory: ~/expo/packages/babel-preset-expo
 
   home:
@@ -155,8 +164,7 @@ jobs:
           command: install
           working_directory: ~/expo
       - save_yarn_cache
-      - yarn:
-          command: jest --maxWorkers 1
+      - jest:
           working_directory: ~/expo/home
 
   client_ios:
