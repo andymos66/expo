@@ -3,7 +3,7 @@ version: 2.1
 commands:
   install_nix:
     steps:
-      - run: curl https://nixos.org/releases/nix/nix-2.1.1/install | bash -s -- --daemon
+      - run: curl https://nixos.org/releases/nix/nix-2.1.1/install | bash -s -- --no-daemon
       # enable nix in future steps
       - run: echo ". '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'" >> $BASH_ENV
   install_basics:
