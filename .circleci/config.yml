@@ -56,16 +56,6 @@ commands:
       - run:
           working_directory: << parameters.working_directory >>
           command: nix run nixpkgs.yarn -c yarn << parameters.command >>
-  with_yarn_bin:
-    parameters:
-      command:
-        type: string
-      working_directory:
-        type: string
-    steps:
-      - run:
-          working_directory: << parameters.working_directory >>
-          command: PATH=$(nix run nixpkgs.yarn -c yarn bin):$PATH << parameters.command >>
 
 executors:
   android:
@@ -177,9 +167,7 @@ jobs:
       - yarn:
           command: install
           working_directory: ~/project/tools-public
-      - with_yarn_bin:
-          working_directory: ~/project/tools-public
-          command: ./generate-files-ios.sh
+      - run: ~/project/tools-public/generate-files-ios.sh
       - run: fastlane ios create_simulator_build
 
   client_android:
@@ -191,9 +179,7 @@ jobs:
       - yarn:
           command: install
           working_directory: ~/expo/tools-public
-      - with_yarn_bin:
-          working_directory: ~/expo/tools-public
-          command: ./generate-dynamic-macros-android.sh
+      - run: ~/expo/tools-public/generate-dynamic-macros-android.sh
       - restore_gradle_cache
       - run:
           working_directory: ~/expo/android
