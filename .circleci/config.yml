@@ -5,7 +5,7 @@ commands:
     steps:
       - run: curl https://nixos.org/releases/nix/nix-2.1.1/install | bash -s -- --no-daemon
       # enable nix in future steps
-      - run: echo ". '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'" >> $BASH_ENV
+      - run: echo ". ~/.nix-profile/etc/profile.d/nix.sh" >> $BASH_ENV
   install_basics:
     steps:
       - run: NIX_PATH= nix-env -iA nixpkgs.git nixpkgs.openssh nixpkgs.gnutar nixpkgs.xz nixpkgs.gzip
